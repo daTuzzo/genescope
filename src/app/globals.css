@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+  
+  code, pre {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg shadow-primary/20 hover:shadow-primary/40;
+  }
+  
+  .btn-secondary {
+    @apply bg-card hover:bg-card-hover text-foreground font-medium py-3 px-6 rounded-lg border border-border transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-card border border-border rounded-xl p-6 transition-all duration-200;
+  }
+  
+  .card-hover {
+    @apply hover:bg-card-hover hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5;
+  }
+
+  .gene-highlight {
+    @apply font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded;
+  }
+  
+  .risk-high {
+    @apply text-danger bg-danger/10 px-2 py-1 rounded font-medium;
+  }
+  
+  .risk-low {
+    @apply text-success bg-success/10 px-2 py-1 rounded font-medium;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.border') transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: theme('colors.border');
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.primary.DEFAULT');
+  }
+}
+
+/* Markdown styling */
+.markdown-body {
+  @apply text-foreground/90 leading-relaxed;
+}
+
+.markdown-body h1 {
+  @apply text-3xl font-bold text-foreground mt-8 mb-4 pb-2 border-b border-border;
+}
+
+.markdown-body h2 {
+  @apply text-2xl font-semibold text-foreground mt-6 mb-3;
+}
+
+.markdown-body h3 {
+  @apply text-xl font-medium text-foreground mt-4 mb-2;
+}
+
+.markdown-body h4 {
+  @apply text-lg font-medium text-primary mt-3 mb-2;
+}
+
+.markdown-body p {
+  @apply mb-4;
+}
+
+.markdown-body ul, .markdown-body ol {
+  @apply mb-4 pl-6;
+}
+
+.markdown-body ul {
+  @apply list-disc;
+}
+
+.markdown-body ol {
+  @apply list-decimal;
+}
+
+.markdown-body li {
+  @apply mb-1;
+}
+
+.markdown-body code {
+  @apply font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded text-sm;
+}
+
+.markdown-body pre {
+  @apply bg-card border border-border rounded-lg p-4 overflow-x-auto mb-4;
+}
+
+.markdown-body pre code {
+  @apply bg-transparent p-0;
+}
+
+.markdown-body blockquote {
+  @apply border-l-4 border-primary pl-4 italic text-foreground/70 my-4;
+}
+
+.markdown-body table {
+  @apply w-full border-collapse mb-4;
+}
+
+.markdown-body th {
+  @apply bg-card border border-border px-4 py-2 text-left font-semibold;
+}
+
+.markdown-body td {
+  @apply border border-border px-4 py-2;
+}
+
+.markdown-body tr:nth-child(even) {
+  @apply bg-card/50;
+}
+
+.markdown-body a {
+  @apply text-primary hover:text-primary-light underline;
+}
+
+.markdown-body hr {
+  @apply border-border my-8;
+}
+
+.markdown-body strong {
+  @apply font-semibold text-foreground;
+}
+
+.markdown-body em {
+  @apply italic;
+}
