@@ -1,1 +1,0 @@
-# GeneScope\n\nPersonal genome analysis tool - Promethease alternative.\n\n## Features\n- Parse MyHeritage/23andMe raw DNA files\n- SNPedia + dbSNP lookup\n- Health risk reports\n- Trait analysis\n- Drug response predictions\n- Beautiful, modern UI\n- Markdown exports

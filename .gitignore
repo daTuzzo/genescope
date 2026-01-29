@@ -1,0 +1,12 @@
+# Data files (too large for git)
+data/clinvar_alleles.tsv
+data/pharmgkb_annotations.zip
+*.pyc
+__pycache__/
+.DS_Store
+reports/*.md
+reports/*.json
+*.egg-info/
+.env
+node_modules/
+.next/
