@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:www.snpedia.com)",
+      "WebFetch(domain:www.ncbi.nlm.nih.gov)",
+      "WebSearch",
+      "WebFetch(domain:www.biostars.org)",
+      "WebFetch(domain:www.geneticlifehacks.com)",
+      "WebFetch(domain:forums.familytreedna.com)",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:adntro.com)",
+      "WebFetch(domain:www.myheritage.com)",
+      "WebFetch(domain:www.toolboxgenomics.com)",
+      "WebFetch(domain:eu.customercare.23andme.com)",
+      "Bash(mkdir -p d:/Coding/dna/genescope/.claude/skills/analyze-genome-v2)",
+      "Bash(mkdir -p d:/Coding/dna/genescope/.claude/skills/interpret-results-v2)",
+      "Bash(node scripts/genome-to-json.mjs profiles/georgi/MyHeritage_raw_dna_data.csv profiles/georgi/genome.json)",
+      "Bash(node scripts/lookup-snps.mjs profiles/georgi/genome.json rs762551 rs4680 rs1801133 rs4988235 rs9923231 rs429358 rs7412)"
+    ]
+  }
+}

@@ -1,87 +1,88 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { spawn } from 'child_process'
+import { readFile, writeFile, mkdir, copyFile } from 'fs/promises'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
-import { mkdir } from 'fs/promises'
+import { runAnalysis } from '@/lib/analysis'
 
 export async function POST(request: NextRequest) {
   try {
-    const { filename } = await request.json()
+    const { filename, profileName } = await request.json()
 
     if (!filename) {
       return NextResponse.json({ error: 'No filename provided' }, { status: 400 })
     }
 
-    const genomePath = path.join(process.cwd(), 'data', filename)
-    const scriptsPath = path.join(process.cwd(), 'scripts', 'run_full_analysis.py')
-    const reportsDir = path.join(process.cwd(), 'reports')
+    const baseDir = process.cwd()
+    const name = profileName || `analysis_${Date.now()}`
 
-    // Ensure reports directory exists
+    // Check registry
+    const registryPath = path.join(baseDir, 'profiles', 'registry.json')
+    let registry: { profiles: any[] } = { profiles: [] }
+    if (existsSync(registryPath)) {
+      registry = JSON.parse(readFileSync(registryPath, 'utf-8'))
+    }
+
+    // Set up profile directory
+    const profileDir = path.join(baseDir, 'profiles', name)
+    const reportsDir = path.join(profileDir, 'reports')
     await mkdir(reportsDir, { recursive: true })
 
-    // Generate analysis ID
-    const analysisId = `analysis_${Date.now()}`
+    // Copy genome file to profile
+    const sourcePath = path.join(baseDir, 'data', filename)
+    const profileGenomePath = path.join(profileDir, 'genome.txt')
+    await copyFile(sourcePath, profileGenomePath)
 
-    // Run Python analysis
-    const result = await runPythonAnalysis(scriptsPath, genomePath, analysisId)
+    // Read and analyze
+    const genomeContent = await readFile(profileGenomePath, 'utf-8')
+    const result = await runAnalysis({ genomeContent, baseDir })
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error }, { status: 500 })
+    // Save findings to profile
+    await writeFile(
+      path.join(profileDir, 'findings.json'),
+      JSON.stringify(result.results, null, 2),
+      'utf-8',
+    )
+
+    // Save reports to profile
+    if (result.reports.genetic) {
+      await writeFile(path.join(reportsDir, 'genetic-report.md'), result.reports.genetic, 'utf-8')
     }
+    if (result.reports.disease) {
+      await writeFile(path.join(reportsDir, 'disease-risk.md'), result.reports.disease, 'utf-8')
+    }
+    if (result.reports.protocol) {
+      await writeFile(path.join(reportsDir, 'health-protocol.md'), result.reports.protocol, 'utf-8')
+    }
+
+    // Update registry
+    const entry = {
+      name,
+      genomePath: `profiles/${name}/genome.txt`,
+      format: 'detected',
+      snpCount: result.results.genomeSNPCount,
+      analyzedAt: new Date().toISOString(),
+      findingsPath: `profiles/${name}/findings.json`,
+      reportsDir: `profiles/${name}/reports/`,
+    }
+
+    const existingIdx = registry.profiles.findIndex((p: any) => p.name === name)
+    if (existingIdx >= 0) {
+      registry.profiles[existingIdx] = entry
+    } else {
+      registry.profiles.push(entry)
+    }
+    writeFileSync(registryPath, JSON.stringify(registry, null, 2), 'utf-8')
 
     return NextResponse.json({
       success: true,
-      analysisId,
-      message: 'Analysis complete',
+      profileName: name,
+      summary: result.results.summary,
     })
   } catch (error) {
     console.error('Analysis error:', error)
     return NextResponse.json(
-      { error: 'Failed to run analysis' },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : 'Failed to run analysis' },
+      { status: 500 },
     )
   }
-}
-
-function runPythonAnalysis(
-  scriptPath: string,
-  genomePath: string,
-  analysisId: string
-): Promise<{ success: boolean; error?: string }> {
-  return new Promise((resolve) => {
-    const python = spawn('python3', [scriptPath, genomePath, '--name', analysisId], {
-      cwd: process.cwd(),
-      env: { ...process.env },
-    })
-
-    let stdout = ''
-    let stderr = ''
-
-    python.stdout.on('data', (data) => {
-      stdout += data.toString()
-      console.log('[Analysis]', data.toString())
-    })
-
-    python.stderr.on('data', (data) => {
-      stderr += data.toString()
-      console.error('[Analysis Error]', data.toString())
-    })
-
-    python.on('close', (code) => {
-      if (code === 0) {
-        resolve({ success: true })
-      } else {
-        resolve({ success: false, error: stderr || 'Analysis failed' })
-      }
-    })
-
-    python.on('error', (err) => {
-      resolve({ success: false, error: err.message })
-    })
-
-    // Timeout after 5 minutes
-    setTimeout(() => {
-      python.kill()
-      resolve({ success: false, error: 'Analysis timed out' })
-    }, 5 * 60 * 1000)
-  })
 }

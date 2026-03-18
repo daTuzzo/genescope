@@ -1,12 +1,20 @@
-# Data files (too large for git)
-data/clinvar_alleles.tsv
-data/pharmgkb_annotations.zip
-*.pyc
-__pycache__/
-.DS_Store
-reports/*.md
-reports/*.json
-*.egg-info/
-.env
+# Dependencies
 node_modules/
 .next/
+
+# ClinVar (too large for git — run /setup to download)
+data/clinvar_alleles.tsv
+data/variant_summary.txt.gz
+
+# User profiles (contain personal genome data)
+profiles/*/
+!profiles/registry.json
+
+# Legacy (top-level reports dir, not profile reports)
+/reports/
+
+# System
+.DS_Store
+.env
+*.pyc
+__pycache__/

@@ -8,26 +8,29 @@ export async function GET(
 ) {
   try {
     const { filename } = await params
-    
-    // Sanitize filename to prevent directory traversal
-    const sanitizedFilename = path.basename(filename)
-    
-    if (!sanitizedFilename.endsWith('.md')) {
-      return NextResponse.json({ error: 'Invalid file type' }, { status: 400 })
+    const decoded = decodeURIComponent(filename)
+
+    // filename format: "profileName/report-file.md"
+    // Sanitize to prevent directory traversal
+    const parts = decoded.split('/')
+    if (parts.length !== 2 || !parts[1].endsWith('.md')) {
+      return NextResponse.json({ error: 'Invalid report path' }, { status: 400 })
     }
 
-    const filePath = path.join(process.cwd(), 'reports', sanitizedFilename)
+    const [profileName, reportFile] = parts
+    const safeName = path.basename(profileName)
+    const safeFile = path.basename(reportFile)
+
+    const filePath = path.join(process.cwd(), 'profiles', safeName, 'reports', safeFile)
     const content = await readFile(filePath, 'utf-8')
 
     return NextResponse.json({
-      filename: sanitizedFilename,
+      filename: `${safeName}/${safeFile}`,
+      profileName: safeName,
       content,
     })
   } catch (error) {
     console.error('Error reading report:', error)
-    return NextResponse.json(
-      { error: 'Report not found' },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: 'Report not found' }, { status: 404 })
   }
 }
