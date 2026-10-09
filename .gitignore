@@ -18,3 +18,4 @@ profiles/*/
 .env
 *.pyc
 __pycache__/
+.claude/settings.local.json
