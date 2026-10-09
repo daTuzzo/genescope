@@ -22,13 +22,14 @@ const DATA_DIR = join(__dirname, '..', 'data');
 const INPUT_PATH = join(DATA_DIR, 'variant_summary.txt.gz');
 const OUTPUT_PATH = join(DATA_DIR, 'clinvar_alleles.tsv');
 
-// Review status -> gold stars mapping (ClinVar standard)
+// Review status -> gold stars mapping (ClinVar standard, https://www.ncbi.nlm.nih.gov/clinvar/docs/review_status/).
+// Keep in step with reviewToStars() in src/lib/analysis/disease-analyzer.ts (tests/clinvar-stars.test.mjs checks it).
 const REVIEW_STARS = {
   'practice guideline': 4,
-  'reviewed by expert panel': 4,
-  'criteria provided, multiple submitters, no conflicts': 3,
-  'criteria provided, conflicting classifications': 2,
-  'criteria provided, conflicting interpretations': 2,
+  'reviewed by expert panel': 3,
+  'criteria provided, multiple submitters, no conflicts': 2,
+  'criteria provided, conflicting classifications': 1,
+  'criteria provided, conflicting interpretations': 1,
   'criteria provided, single submitter': 1,
   'no assertion for the individual variant': 0,
   'no assertion criteria provided': 0,
