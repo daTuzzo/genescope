@@ -57,13 +57,15 @@ function classifyClinSig(raw: string): string | null {
 }
 
 /**
- * Convert ClinVar review status to gold stars.
+ * Convert ClinVar review status to gold stars, as ClinVar does:
+ * https://www.ncbi.nlm.nih.gov/clinvar/docs/review_status/
  */
-function reviewToStars(status: string): number {
+export function reviewToStars(status: string): number {
   const lower = status.toLowerCase()
-  if (lower.includes('practice guideline') || lower.includes('expert panel')) return 4
-  if (lower.includes('multiple submitters') && lower.includes('no conflicts')) return 3
-  if (lower.includes('conflicting')) return 2
+  if (lower.includes('practice guideline')) return 4
+  if (lower.includes('expert panel')) return 3
+  if (lower.includes('multiple submitters') && lower.includes('no conflicts')) return 2
+  if (lower.includes('conflicting')) return 1
   if (lower.includes('criteria provided') && lower.includes('single')) return 1
   return 0
 }
@@ -143,7 +145,10 @@ export async function analyzeClinVar(
     const category = classifyClinSig(clinSig)
     if (!category) continue
 
-    const goldStars = parseInt(get('gold_stars')) || reviewToStars(get('review_status'))
+    // From the review status when the row has one, so a clinvar_alleles.tsv processed with the old
+    // star table still gets ClinVar's stars without a rebuild.
+    const reviewStatus = get('review_status')
+    const goldStars = reviewStatus ? reviewToStars(reviewStatus) : parseInt(get('gold_stars')) || 0
 
     // For pathogenic/likely pathogenic: require minimum confidence
     if ((category === 'pathogenic' || category === 'likely_pathogenic') && goldStars < MIN_STARS_PATHOGENIC) {
