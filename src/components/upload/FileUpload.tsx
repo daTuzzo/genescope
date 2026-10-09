@@ -83,13 +83,14 @@ export function FileUpload({ onUploadComplete }: FileUploadProps) {
         throw new Error(errData.error || 'Analysis failed')
       }
 
-      const { analysisId } = await analyzeRes.json()
-      
+      // /api/analyze returns { success, profileName, summary }: the profile name identifies the analysis.
+      const { profileName } = await analyzeRes.json()
+
       setUploadState('complete')
       setProgress('Analysis complete!')
-      
+
       setTimeout(() => {
-        onUploadComplete(analysisId)
+        onUploadComplete(profileName)
       }, 1500)
 
     } catch (err) {
