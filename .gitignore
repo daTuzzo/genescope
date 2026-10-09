@@ -6,9 +6,13 @@ node_modules/
 data/clinvar_alleles.tsv
 data/variant_summary.txt.gz
 
-# User profiles (contain personal genome data)
+# User profiles (contain personal genome data). The registry holds profile names and,
+# from the CLI, genome file paths; the app and the CLI create it when it is missing.
 profiles/*/
-!profiles/registry.json
+profiles/registry.json
+
+# Raw genomes saved by /api/upload
+data/genome_*.txt
 
 # Legacy (top-level reports dir, not profile reports)
 /reports/
