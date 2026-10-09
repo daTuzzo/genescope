@@ -15,14 +15,15 @@ export function detectFormat(content: string): GenomeFormat {
     return 'myheritage'
   }
 
+  // AncestryDNA: header "rsid\tchromosome\tposition\tallele1\tallele2" or mentions AncestryDNA.
+  // Checked before 23andMe, whose data-line test also matches AncestryDNA data lines.
+  if (lines.some(l => l.includes('AncestryDNA') || /^rsid\tchromosome/i.test(l))) {
+    return 'ancestry'
+  }
+
   // 23andMe: TSV with # comments, lines like "rs12345\t1\t12345\tAG"
   if (lines.some(l => l.startsWith('# rsid') || /^rs\d+\t/.test(l))) {
     return '23andme'
-  }
-
-  // AncestryDNA: header "rsid\tchromosome\tposition\tallele1\tallele2" or mentions AncestryDNA
-  if (lines.some(l => l.includes('AncestryDNA') || /^rsid\tchromosome/i.test(l))) {
-    return 'ancestry'
   }
 
   return 'unknown'
@@ -105,7 +106,7 @@ function parse23andMe(content: string): GenomeSNP[] {
     const [rsid, chromosome, position, genotype] = parts
 
     if (!genotype || genotype === '--') continue
-    if (!rsid.startsWith('rs') && !rsid.startsWith('i')) continue
+    if (!/^(rs|i)\d+$/.test(rsid)) continue // also skips a "rsid" header row
 
     snps.push({ rsid, chromosome, position, genotype })
   }
@@ -128,7 +129,7 @@ function parseAncestryDNA(content: string): GenomeSNP[] {
     if (parts.length >= 5) {
       const [rsid, chromosome, position, allele1, allele2] = parts
       if (allele1 === '0' || allele2 === '0') continue
-      if (!rsid.startsWith('rs')) continue
+      if (!/^rs\d+$/.test(rsid)) continue // also skips the "rsid" header row
       snps.push({ rsid, chromosome, position, genotype: allele1 + allele2 })
     } else if (parts.length >= 4) {
       // Or same as 23andMe format
