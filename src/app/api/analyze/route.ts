@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir, copyFile } from 'fs/promises'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import { runAnalysis } from '@/lib/analysis'
+import { isUploadedGenomeFilename, isValidProfileName } from '@/lib/safe-names'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +11,14 @@ export async function POST(request: NextRequest) {
 
     if (!filename) {
       return NextResponse.json({ error: 'No filename provided' }, { status: 400 })
+    }
+
+    // Both values become file paths below. Accept only names that cannot leave data/ or profiles/.
+    if (!isUploadedGenomeFilename(filename)) {
+      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 })
+    }
+    if (profileName && !isValidProfileName(profileName)) {
+      return NextResponse.json({ error: 'Invalid profile name' }, { status: 400 })
     }
 
     const baseDir = process.cwd()
