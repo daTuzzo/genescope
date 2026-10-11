@@ -168,10 +168,10 @@ export function generateDiseaseReport(
 | **Protective** | ${findings.protective.length} | Reduced disease risk |
 
 ### Confidence Levels (Gold Stars)
-- 4 stars: Practice guideline / Expert panel reviewed
-- 3 stars: Multiple submitters, no conflicts
-- 2 stars: Multiple submitters with some conflicts
-- 1 star: Single submitter with criteria
+- 4 stars: Practice guideline
+- 3 stars: Reviewed by expert panel
+- 2 stars: Multiple submitters, no conflicts
+- 1 star: Single submitter with criteria, or conflicting classifications
 
 ---
 
