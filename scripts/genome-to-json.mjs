@@ -31,12 +31,15 @@ const lines = content.split('\n')
 // Detect format
 let format = 'unknown'
 const headerLines = lines.slice(0, 15)
-if (headerLines.some(l => /["']?RSID["']?/i.test(l) && /CHROMOSOME/i.test(l))) {
+// Same tests and order as detectFormat() in src/lib/analysis/genome-loader.ts. The MyHeritage test needs a
+// quoted RSID, a CSV header or the MyHeritage marker, so the tab-separated 23andMe and AncestryDNA headers
+// do not match it. AncestryDNA goes before 23andMe, whose data-line test also matches AncestryDNA data.
+if (headerLines.some(l => /["']RSID["']/i.test(l) || /^RSID,CHROMOSOME/i.test(l) || /^##fileformat=MyHeritage/i.test(l))) {
   format = 'myheritage'
-} else if (headerLines.some(l => l.startsWith('# rsid') || /^rs\d+\t/.test(l))) {
-  format = '23andme'
 } else if (headerLines.some(l => l.includes('AncestryDNA') || /^rsid\tchromosome/i.test(l))) {
   format = 'ancestry'
+} else if (headerLines.some(l => l.startsWith('# rsid') || /^rs\d+\t/.test(l))) {
+  format = '23andme'
 }
 
 const snps = {}
@@ -69,7 +72,7 @@ for (const line of lines) {
     }
   }
 
-  if (!rsid || !rsid.startsWith('rs')) continue
+  if (!rsid || !/^rs\d+$/.test(rsid)) continue // also skips the "rsid" header row
   if (!genotype || genotype === '--' || genotype === '00') { skipped++; continue }
 
   snps[rsid] = { chrom, pos, genotype }
