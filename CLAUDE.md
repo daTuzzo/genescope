@@ -23,7 +23,7 @@ PharmGKB and curated SNPs are in the repo. Only **ClinVar** needs downloading (5
 Run `/setup` or manually:
 
 ```bash
-npm install
+pnpm install
 curl -L -o data/variant_summary.txt.gz "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/variant_summary.txt.gz"
 node scripts/process_clinvar.mjs
 rm data/variant_summary.txt.gz
