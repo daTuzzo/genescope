@@ -21,7 +21,7 @@ Personal genome analysis powered by Claude. Upload your DNA file from MyHeritage
 ```bash
 git clone <repo-url>
 cd genescope
-npm install
+pnpm install
 ```
 
 ### First-time setup — download ClinVar database
@@ -134,7 +134,7 @@ All formats use GRCh37/hg19 coordinates. The loader handles each natively — no
 ## Web UI (Work in Progress)
 
 ```bash
-npm run dev               # http://localhost:3000
+pnpm dev                   # http://localhost:3000
 ```
 
 The Next.js web viewer exists but is **not fully tested yet**. It was built for V1's report structure and hasn't been updated for V2's multi-file output. Don't expect a polished experience — the CLI with Claude Code is the primary interface for now.

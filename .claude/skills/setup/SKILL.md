@@ -28,7 +28,7 @@ If somehow missing, warn the user.
 ### 2. Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. Download and process ClinVar
@@ -56,7 +56,7 @@ If `profiles/registry.json` doesn't exist, create it:
 ### 5. Verify
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Report to user:

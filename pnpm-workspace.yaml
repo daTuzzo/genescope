@@ -1,0 +1,7 @@
+overrides:
+  'next>postcss': 8.5.28
+  postcss-selector-parser: 7.1.6
+
+allowBuilds:
+  # unrs-resolver ships prebuilt binaries per platform; its script is a fallback.
+  unrs-resolver: false
